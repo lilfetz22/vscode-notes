@@ -2,61 +2,61 @@
     "editor.tokenColorCustomizations": {
       "textMateRules": [
         {
-          "scope": "source.notes",
+          "scope": "source.notesnlh",
           "settings": {
             "foreground": "#d4d4d4ff"
           }
         },
         {
-          "scope": "markup.heading.notes",
+          "scope": "markup.heading.notesnlh",
           "settings": {
             "foreground": "#569cd6ff"
           }
         },
         {
-          "scope": "markup.changed.notes",
+          "scope": "markup.changed.notesnlh",
           "settings": {
             "foreground": "#569cd6ff"
           }
         },
         {
-          "scope": "markup.canceled.notes",
+          "scope": "markup.canceled.notesnlh",
           "settings": {
             "foreground": "#656565ff"
           }
         },
         {
-          "scope": "variable.language.notes",
+          "scope": "variable.language.notesnlh",
           "settings": {
             "foreground": "#92b630ff"
           }
         },
         {
-          "scope": "markup.bold.notes",
+          "scope": "markup.bold.notesnlh",
           "settings": {
             "foreground": "#569cd6ff"
           }
         },
         {
-          "scope": "keyword.other.notes",
+          "scope": "keyword.other.notesnlh",
           "settings": {
             "foreground": "#569cd6ff"
           }
         },
         {
-          "scope": "keyword.operator.notes",
+          "scope": "keyword.operator.notesnlh",
           "settings": {
             "foreground": "#92b630ff"
           }
         },
         {
-          "scope": "invalid.deprecated.notes",
+          "scope": "invalid.deprecated.notesnlh",
           "settings": {
             "foreground": "#f44747ff"
           }
         },
         {
-          "scope": "comment.notes",
+          "scope": "comment.notesnlh",
           "settings": {
             "foreground": "#6a9955ff"
           }

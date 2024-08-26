@@ -20,10 +20,10 @@
     "configuration": {
       "title": "Notes NLH",
       "properties": {
-        "notes.linkPatterns": {
+        "notesnlh.linkPatterns": {
           "type": "object",
           "default": {},
-          "description": "A list of regex to link patterns (e.g. Item: \"ABC-\\d+\"  Value: \"https://abc-project.atlassian.net/browse/$0\") that will be applied across all your notes. Turns matching text into links.",
+          "description": "A list of regex to link patterns (e.g. Item: \"ABC-\\d+\"  Value: \"https://abc-project.atlassian.net/browse/$0\") that will be applied across all your notesnlh. Turns matching text into links.",
           "additionalProperties": {
             "anyOf": [
               {
@@ -50,20 +50,20 @@
       {
         "language": "notesnlh",
         "scopeName": "source.notesnlh",
-        "path": "./syntaxes/notes.tmLanguage.json"
+        "path": "./syntaxes/notesnlh.tmLanguage.json"
       }
     ],
     "commands": [
       {
-        "command": "notes.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForward",
         "title": "Task Complete (cycle)"
       },
       {
-        "command": "notes.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackward",
         "title": "Task Complete (cycle backward)"
       },
       {
-        "command": "notes.highlightPartsOfSpeech",
+        "command": "notesnlh.highlightPartsOfSpeech",
         "title": "Highlight Parts of Speech"
       }
     ],
@@ -75,22 +75,22 @@
     ],
     "keybindings": [
       {
-        "command": "notes.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForward",
         "key": "cmd+l",
         "when": "editorTextFocus && isMac"
       },
       {
-        "command": "notes.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForward",
         "key": "ctrl+l",
         "when": "editorTextFocus && !isMac"
       },
       {
-        "command": "notes.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackward",
         "key": "cmd+shift+l",
         "when": "editorTextFocus && isMac"
       },
       {
-        "command": "notes.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackward",
         "key": "ctrl+shift+l",
         "when": "editorTextFocus && !isMac"
       }
