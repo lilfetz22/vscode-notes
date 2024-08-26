@@ -1,4 +1,5 @@
 const vscode = require("vscode");
+const nlp = require('compromise');
 const os = require("os");
 const paths = require("path");
 const {
@@ -13,6 +14,15 @@ const {
   window,
 } = vscode;
 
+// Define color for each part of speech
+const posColors = {
+  Noun: 'entity.name.type',
+  Verb: 'entity.name.function',
+  Adjective: 'entity.other.attribute-name',
+  Adverb: 'variable.language',
+  // Add more parts of speech as needed
+};
+
 exports.activate = async function activate(context) {
   context.subscriptions.push(
     commands.registerTextEditorCommand(
@@ -22,7 +32,14 @@ exports.activate = async function activate(context) {
     commands.registerTextEditorCommand(
       "notes.cycleTaskBackward",
       cycleTaskBackward
+    ),
+      // Add new command for NLP highlighting
+    context.subscriptions.push(
+      commands.registerTextEditorCommand(
+        "notes.highlightPartsOfSpeech",
+        highlightPartsOfSpeech
     )
+  )
   );
 
   function expandPathHome(path) {
@@ -183,5 +200,62 @@ exports.activate = async function activate(context) {
         }
       });
     });
+  }
+  // Function to highlight parts of speech
+  async function highlightPartsOfSpeech(editor) {
+    const document = editor.document;
+    const text = document.getText();
+
+    // Perform NLP analysis
+    const doc = nlp(text);
+    const terms = doc.terms().out('array');
+
+    // Create semantic tokens
+    const semanticTokens = [];
+    let lineNumber = 0;
+    let characterNumber = 0;
+
+    for (const term of terms) {
+      const pos = term.tags[0]; // Get the first tag as the part of speech
+      if (posColors[pos]) {
+        const range = new vscode.Range(
+          new vscode.Position(lineNumber, characterNumber),
+          new vscode.Position(lineNumber, characterNumber + term.text.length)
+        );
+        semanticTokens.push({
+          range,
+          token: posColors[pos]
+        });
+      }
+
+      // Update position
+      if (term.text.includes('\n')) {
+        lineNumber += (term.text.match(/\n/g) || []).length;
+        characterNumber = term.text.length - term.text.lastIndexOf('\n') - 1;
+      } else {
+        characterNumber += term.text.length;
+      }
+    }
+
+    // Apply semantic highlighting
+    const semanticHighlights = vscode.languages.createDocumentSemanticTokensProvider(
+      { language: 'notes' },
+      {
+        provideDocumentSemanticTokens(document) {
+          const builder = new vscode.SemanticTokensBuilder();
+          semanticTokens.forEach(token => {
+            builder.push(
+              token.range,
+              token.token
+            );
+          });
+          return builder.build();
+        }
+      }
+    );
+
+    context.subscriptions.push(
+      semanticHighlights
+    );
   }
 };
