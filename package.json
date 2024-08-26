@@ -1,7 +1,7 @@
 {
-  "name": "notes_nl_highlighting",
+  "name": "notes_nlh",
   "displayName": "Notes_NLH",
-  "description": "Syntax highlighting for simple notes in Visual Studio Code",
+  "description": "Syntax highlighting for simple notes with NLP in Visual Studio Code",
   "icon": "images/icon.png",
   "version": "1.3.0",
   "publisher": "lilfetz22",
@@ -18,7 +18,7 @@
   "main": "./vscode/extension",
   "contributes": {
     "configuration": {
-      "title": "Notes",
+      "title": "Notes NLH",
       "properties": {
         "notes.linkPatterns": {
           "type": "object",
@@ -36,20 +36,20 @@
     },
     "languages": [
       {
-        "id": "notes",
+        "id": "notesnlh",
         "aliases": [
-          "Notes"
+          "Notes NLH"
         ],
         "extensions": [
-          ".notes"
+          ".notesnlh"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "notes",
-        "scopeName": "source.notes",
+        "language": "notesnlh",
+        "scopeName": "source.notesnlh",
         "path": "./syntaxes/notes.tmLanguage.json"
       }
     ],
@@ -61,11 +61,15 @@
       {
         "command": "notes.cycleTaskBackward",
         "title": "Task Complete (cycle backward)"
+      },
+      {
+        "command": "notes.highlightPartsOfSpeech",
+        "title": "Highlight Parts of Speech"
       }
     ],
     "snippets": [
       {
-        "language": "notes",
+        "language": "notesnlh",
         "path": "./snippets/newday.json"
       }
     ],
@@ -90,11 +94,32 @@
         "key": "ctrl+shift+l",
         "when": "editorTextFocus && !isMac"
       }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "entity_name_type",
+        "description": "Noun"
+      },
+      {
+        "id": "entity_name_function",
+        "description": "Verb"
+      },
+      {
+        "id": "entity_other_attribute_name",
+        "description": "Adjective"
+      },
+      {
+        "id": "variable_language",
+        "description": "Adverb"
+      }
     ]
   },
   "__metadata": {
     "id": "",
     "publisherDisplayName": "lilfetz22",
     "publisherId": ""
+  },
+  "dependencies": {
+    "compromise": "^14.14.0"
   }
 }
