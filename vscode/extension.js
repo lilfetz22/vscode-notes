@@ -26,17 +26,17 @@ const posColors = {
 exports.activate = async function activate(context) {
   context.subscriptions.push(
     commands.registerTextEditorCommand(
-      "notes.cycleTaskForwardNew",
+      "notesnlh.cycleTaskForwardNew",
       cycleTaskForwardNew
     ),
     commands.registerTextEditorCommand(
-      "notes.cycleTaskBackwardNew",
+      "notesnlh.cycleTaskBackwardNew",
       cycleTaskBackwardNew
     ),
       // Add new command for NLP highlighting
     context.subscriptions.push(
       commands.registerTextEditorCommand(
-        "notes.highlightPartsOfSpeech",
+        "notesnlh.highlightPartsOfSpeech",
         highlightPartsOfSpeech
     )
   )
@@ -54,7 +54,7 @@ exports.activate = async function activate(context) {
     return text.replace(/\$(\d+)/g, (_, p1) => matches[parseInt(p1, 10)]);
   }
 
-  const linkPattern = /("([^"]+?\.notes)"|[^\s]+?\.notes)/g;
+  const linkPattern = /("([^"]+?\.notesnlh)"|[^\s]+?\.notesnlh)/g;
   // A file can describe it's own links via this pattern, e.g.
   //   [/\(MLG-\d+\)/ -> https://mediciventures.atlassian.net/browse/$0]
   const externalLinkPatterns = /\[\/([^\/]+)\/\s*->\s*(https?:\/\/[^\]]+)\]/g;
@@ -71,7 +71,7 @@ exports.activate = async function activate(context) {
       const externalPatterns = [];
 
       // use global link patterns from config
-      linkPatterns = vscode.workspace.getConfiguration("notes")["linkPatterns"];
+      linkPatterns = vscode.workspace.getConfiguration("notesnlh")["linkPatterns"];
       if (linkPatterns) {
         for (let [regexp, link] of Object.entries(linkPatterns)) {
           externalPatterns.push({ regexp, link });
@@ -84,7 +84,7 @@ exports.activate = async function activate(context) {
       }
       const results = [];
 
-      // Find "*.notes" links to other notes files in this document
+      // Find "*.notesnlh" links to other notesnlh files in this document
       while ((match = linkPattern.exec(text))) {
         const linkEnd = document.positionAt(linkPattern.lastIndex);
         const linkStart = linkEnd.translate({
@@ -201,61 +201,121 @@ exports.activate = async function activate(context) {
       });
     });
   }
-  // Function to highlight parts of speech
-  async function highlightPartsOfSpeech(editor) {
-    const document = editor.document;
-    const text = document.getText();
+  // // Function to highlight parts of speech
+  // async function highlightPartsOfSpeech(editor) {
+  //   const document = editor.document;
+  //   const text = document.getText();
 
-    // Perform NLP analysis
-    const doc = nlp(text);
-    const terms = doc.terms().out('array');
+  //   // Perform NLP analysis
+  //   const doc = nlp(text);
+  //   const terms = doc.terms().out('array');
 
-    // Create semantic tokens
-    const semanticTokens = [];
-    let lineNumber = 0;
-    let characterNumber = 0;
+  //   // Create semantic tokens
+  //   const semanticTokens = [];
+  //   let lineNumber = 0;
+  //   let characterNumber = 0;
 
-    for (const term of terms) {
-      const pos = term.tags[0]; // Get the first tag as the part of speech
-      if (posColors[pos]) {
-        const range = new vscode.Range(
-          new vscode.Position(lineNumber, characterNumber),
-          new vscode.Position(lineNumber, characterNumber + term.text.length)
-        );
-        semanticTokens.push({
-          range,
-          token: posColors[pos]
-        });
-      }
+  //   for (const term of terms) {
+  //     const pos = term.tags[0]; // Get the first tag as the part of speech
+  //     if (posColors[pos]) {
+  //       const range = new vscode.Range(
+  //         new vscode.Position(lineNumber, characterNumber),
+  //         new vscode.Position(lineNumber, characterNumber + term.text.length)
+  //       );
+  //       semanticTokens.push({
+  //         range,
+  //         token: posColors[pos]
+  //       });
+  //     }
 
-      // Update position
-      if (term.text.includes('\n')) {
-        lineNumber += (term.text.match(/\n/g) || []).length;
-        characterNumber = term.text.length - term.text.lastIndexOf('\n') - 1;
-      } else {
-        characterNumber += term.text.length;
-      }
-    }
+  //     // Update position
+  //     if (term.text.includes('\n')) {
+  //       lineNumber += (term.text.match(/\n/g) || []).length;
+  //       characterNumber = term.text.length - term.text.lastIndexOf('\n') - 1;
+  //     } else {
+  //       characterNumber += term.text.length;
+  //     }
+  //   }
 
-    // Apply semantic highlighting
-    const semanticHighlights = vscode.languages.createDocumentSemanticTokensProvider(
-      { language: 'notesnlh' },
-      {
-        provideDocumentSemanticTokens(document) {
-          const builder = new vscode.SemanticTokensBuilder();
-          semanticTokens.forEach(token => {
-            builder.push(
-              token.range,
-              token.token
-            );
-          });
-          return builder.build();
+  //   // Apply semantic highlighting
+  //   const semanticHighlights = vscode.languages.createDocumentSemanticTokensProvider(
+  //     { language: 'notesnlh' },
+  //     {
+  //       provideDocumentSemanticTokens(document) {
+  //         const builder = new vscode.SemanticTokensBuilder();
+  //         semanticTokens.forEach(token => {
+  //           builder.push(
+  //             token.range,
+  //             token.token
+  //           );
+  //         });
+  //         return builder.build();
+  //       }
+  //     }
+  //   );
+
+  //   context.subscriptions.push(
+  //     semanticHighlights
+  //   );
+  // }
+
+  // Define the semantic tokens provider
+  const semanticTokensProvider = {
+    provideDocumentSemanticTokens(document) {
+      const text = document.getText();
+      const doc = nlp(text);
+      const terms = doc.terms().out('array');
+
+      const builder = new vscode.SemanticTokensBuilder();
+      let lineNumber = 0;
+      let characterNumber = 0;
+
+      for (const term of terms) {
+        const pos = term.tags[0]; // Get the first tag as the part of speech
+        if (posColors[pos]) {
+          const range = new vscode.Range(
+            new vscode.Position(lineNumber, characterNumber),
+            new vscode.Position(lineNumber, characterNumber + term.text.length)
+          );
+          builder.push(range, posColors[pos]);
+        }
+
+        // Update position
+        if (term.text.includes('\n')) {
+          lineNumber += (term.text.match(/\n/g) || []).length;
+          characterNumber = term.text.length - term.text.lastIndexOf('\n') - 1;
+        } else {
+          characterNumber += term.text.length;
         }
       }
-    );
 
-    context.subscriptions.push(
-      semanticHighlights
-    );
-  }
+      return builder.build();
+    }
+  };
+
+  // Register the semantic tokens provider
+  const selector = { language: 'notesnlh' };
+  const legend = new vscode.SemanticTokensLegend(Object.values(posColors));
+  const semanticTokensRegistration = vscode.languages.registerDocumentSemanticTokensProvider(
+    selector,
+    semanticTokensProvider,
+    legend
+  );
+
+  // Add the registration to subscriptions so it can be properly disposed
+  context.subscriptions.push(semanticTokensRegistration);
+
+  // Register the command to trigger semantic highlighting
+  const disposable = vscode.commands.registerCommand('notesnlh.highlightPartsOfSpeech', () => {
+    vscode.window.showInformationMessage('Highlighting parts of speech...');
+    // The actual highlighting is now handled by the semantic tokens provider
+  });
+
+  context.subscriptions.push(disposable);
+// ... (export the activate function)
+// I don't know what this means...
+
+
+
+
 };
