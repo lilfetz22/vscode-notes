@@ -60,25 +60,23 @@
           "settings": {
             "foreground": "#6a9955ff"
           }
-        },
-        {
-          "scope": "entity.name.noun",
-          "settings": {
-            "foreground": "#4CAF50"
-          }
-        },
-        {
-          "scope": "keyword.verb",
-          "settings": {
-            "foreground": "#2196F3"
-          }
-        },
-        {
-          "scope": "entity.other.attribute-name.adjective",
-          "settings": {
-            "foreground": "#FFC107"
-          }
         }
       ]
+    },
+    "editor.semanticTokenColorCustomizations": {
+        "rules": {
+            "entity_name_type": {
+                "foreground": "#4EC9B0"
+            },
+            "entity_name_function": {
+                "foreground": "#DCDCAA"
+            },
+            "entity_other_attribute_name": {
+                "foreground": "#9CDCFE"
+            },
+            "variable_language": {
+                "foreground": "#C586C0"
+            }
+        }
     }
 }

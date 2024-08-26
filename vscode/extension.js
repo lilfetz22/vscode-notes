@@ -16,22 +16,22 @@ const {
 
 // Define color for each part of speech
 const posColors = {
-  Noun: 'entity.name.type',
-  Verb: 'entity.name.function',
-  Adjective: 'entity.other.attribute-name',
-  Adverb: 'variable.language',
+  Noun: 'entity_name_type',
+  Verb: 'entity_name_function',
+  Adjective: 'entity_other_attribute-name',
+  Adverb: 'variable_language',
   // Add more parts of speech as needed
 };
 
 exports.activate = async function activate(context) {
   context.subscriptions.push(
     commands.registerTextEditorCommand(
-      "notes.cycleTaskForward",
-      cycleTaskForward
+      "notes.cycleTaskForwardNew",
+      cycleTaskForwardNew
     ),
     commands.registerTextEditorCommand(
-      "notes.cycleTaskBackward",
-      cycleTaskBackward
+      "notes.cycleTaskBackwardNew",
+      cycleTaskBackwardNew
     ),
       // Add new command for NLP highlighting
     context.subscriptions.push(
@@ -128,7 +128,7 @@ exports.activate = async function activate(context) {
   };
 
   context.subscriptions.push(
-    languages.registerDocumentLinkProvider({ language: "notes" }, linkProvider)
+    languages.registerDocumentLinkProvider({ language: "notesnlh" }, linkProvider)
   );
 
   function swap(obj) {
@@ -164,11 +164,11 @@ exports.activate = async function activate(context) {
     }
   }
 
-  function cycleTaskForward(editor) {
+  function cycleTaskForwardNew(editor) {
     cycleTask(editor, nextTaskState);
   }
 
-  function cycleTaskBackward(editor) {
+  function cycleTaskBackwardNew(editor) {
     cycleTask(editor, prevTaskState);
   }
 
@@ -239,7 +239,7 @@ exports.activate = async function activate(context) {
 
     // Apply semantic highlighting
     const semanticHighlights = vscode.languages.createDocumentSemanticTokensProvider(
-      { language: 'notes' },
+      { language: 'notesnlh' },
       {
         provideDocumentSemanticTokens(document) {
           const builder = new vscode.SemanticTokensBuilder();
