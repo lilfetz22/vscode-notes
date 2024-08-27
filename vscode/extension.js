@@ -269,8 +269,8 @@ exports.activate = async function activate(context) {
                 new vscode.Position(lineNumber, characterNumber),
                 new vscode.Position(lineNumber, characterNumber + term.text.length)
               );
-              console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
-                Range: ${range.start.line}:${range.start.character}-${range.end.line}:${range.end.character}`);
+              // console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
+              //   Range: ${range.start.line + 1}:${range.start.character + 1}-${range.end.line + 1}:${range.end.character + 1}`);
               builder.push(range, posColors[pos]);
             }
 
