@@ -275,8 +275,11 @@ exports.activate = async function activate(context) {
                 new vscode.Position(lineNumber, characterNumber),
                 new vscode.Position(lineNumber, characterNumber + term.text.length)
               );
+              // console.log('Range:', range);
               const tokenType = tokenTypes.indexOf(posColors[pos]);
-              builder.push(range, posColors[pos], tokenType);
+              console.log('Token Type:', tokenType);
+              // builder.push(range, posColors[pos], tokenType);
+              builder.push(range, tokenType);
               // builder.push(range, posColors[pos]);
             }
             if (term.text.includes('\n')) {
