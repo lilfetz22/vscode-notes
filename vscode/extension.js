@@ -128,7 +128,7 @@ exports.activate = async function activate(context) {
   };
 
   context.subscriptions.push(
-    languages.registerDocumentLinkProvider({ language: "notesnlh" }, linkProvider)
+    languages.registerDocumentLinkProvider({ scheme: 'file', language: "notesnlh" }, linkProvider)
   );
 
   function swap(obj) {
@@ -236,75 +236,49 @@ exports.activate = async function activate(context) {
         characterNumber += term.text.length;
       }
     }
-
-    // // Apply semantic highlighting
-    // const semanticHighlights = vscode.languages.createDocumentSemanticTokensProvider(
-    //   { language: 'notesnlh' },
-    //   {
-    //     provideDocumentSemanticTokens(document) {
-    //       const builder = new vscode.SemanticTokensBuilder();
-    //       semanticTokens.forEach(token => {
-    //         builder.push(
-    //           token.range,
-    //           token.token
-    //         );
-    //       });
-    //       return builder.build();
-    //     }
-    //   }
-    // );
-
-    // context.subscriptions.push(
-    //   semanticHighlights
-    // );
   }
 
   // Define the semantic tokens provider
   const semanticTokensProvider = {
     provideDocumentSemanticTokens(document) {
       const text = document.getText();
-      console.log('Processing document:', document.uri.toString());
-      console.log('Document content (first 100 chars):', text.substring(0, 100));
+      // console.log('Processing document:', document.uri.toString());
+      // console.log('Document content (first 100 chars):', text.substring(0, 100));
   
       try {
         const doc = nlp(text);
         const json = doc.json();
         // console.log('JSON doc:', json[0].terms[0].tags); ['Expression']
-        console.log('NLP doc:', doc);
-        const terms = json.terms;
-        console.log('NLP terms (first row):', terms[0]);
-  
-        const builder = new vscode.SemanticTokensBuilder();
+        // console.log('NLP doc:', doc);
+          
+        const builder = new vscode.SemanticTokensBuilder(legend);
         let lineNumber = 0;
         let characterNumber = 0;
-  
-        for (const term of terms) {
-          if (!term || typeof term !== 'object') {
-            console.log('Invalid term:', term, 'type of term:', typeof term);
-            continue;
+
+        for (const sentence of json) {
+          const terms = sentence.terms;
+          for (const term of terms) {
+            if (!term || typeof term !== 'object') {
+              console.log('Invalid term:', term, 'type of term:', typeof term);
+              continue;
+            }
+            // console.log('NLP term (tag 0):', term.text.length);
+            const pos = term.tags[0]; // Get the first tag as the part of speech
+            if (posColors[pos]) {
+              const range = new vscode.Range(
+                new vscode.Position(lineNumber, characterNumber),
+                new vscode.Position(lineNumber, characterNumber + term.text.length)
+              );
+              builder.push(range, posColors[pos]);
+            }
+            if (term.text.includes('\n')) {
+              lineNumber += (term.text.match(/\n/g) || []).length;
+              characterNumber = term.text.length - term.text.lastIndexOf('\n') - 1;
+            } else {
+              characterNumber += term.text.length;
+            }
           }
-  
-          const tags = doc.text().tags || [];
-          // console.log('Term:', doc.text(), 'Tags:', tags, 'Term', term);
-  
-          const pos = tags[0]; // Get the first tag as the part of speech
-          if (posColors[pos]) {
-            const range = new vscode.Range(
-              new vscode.Position(lineNumber, characterNumber),
-              new vscode.Position(lineNumber, characterNumber + term.text.length)
-            );
-            builder.push(range, posColors[pos]);
-          }
-  
-          // Update position
-          if (term.text.includes('\n')) {
-            lineNumber += (term.text.match(/\n/g) || []).length;
-            characterNumber = term.text.length - term.text.lastIndexOf('\n') - 1;
-          } else {
-            characterNumber += term.text.length;
-          }
-        }
-  
+        }  
         return builder.build();
       } catch (error) {
         console.error('Error in provideDocumentSemanticTokens:', error);
@@ -314,8 +288,8 @@ exports.activate = async function activate(context) {
   };
 
   // Register the semantic tokens provider
-  const selector = { language: 'notesnlh' };
-  const legend = new vscode.SemanticTokensLegend(Object.values(posColors));
+  const selector = { scheme: 'file', language: 'notesnlh' };
+  const legend = new vscode.SemanticTokensLegend(Object.values(posColors));  
   const semanticTokensRegistration = vscode.languages.registerDocumentSemanticTokensProvider(
     selector,
     semanticTokensProvider,
@@ -333,7 +307,6 @@ exports.activate = async function activate(context) {
 
   context.subscriptions.push(disposable);
 // ... (export the activate function)
-// I don't know what this means...
 
 
 
