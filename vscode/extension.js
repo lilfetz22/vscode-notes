@@ -253,8 +253,8 @@ exports.activate = async function activate(context) {
         const doc = nlp(text);
         const json = doc.json();
         const builder = new vscode.SemanticTokensBuilder(legend);
-        let lineNumber = 1;
-        let characterNumber = 1;
+        let lineNumber = 0;
+        let characterNumber = 0;
 
         for (const sentence of json) {
           for (const term of sentence.terms) {
@@ -278,7 +278,7 @@ exports.activate = async function activate(context) {
             for (const char of term.text) {
               if (char === '\n') {
                 lineNumber++;
-                characterNumber = 1;
+                characterNumber = 0;
               } else {
                 characterNumber++;
               }
@@ -289,7 +289,7 @@ exports.activate = async function activate(context) {
             for (const char of afterText) {
               if (char === '\n') {
                 lineNumber++;
-                characterNumber = 1;
+                characterNumber = 0;
               } else {
                 characterNumber++;
               }
