@@ -55,11 +55,11 @@
     ],
     "commands": [
       {
-        "command": "notesnlh.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForwardNew",
         "title": "Task Complete (cycle)"
       },
       {
-        "command": "notesnlh.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackwardNew",
         "title": "Task Complete (cycle backward)"
       },
       {
@@ -75,22 +75,22 @@
     ],
     "keybindings": [
       {
-        "command": "notesnlh.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForwardNew",
         "key": "cmd+l",
         "when": "editorTextFocus && isMac"
       },
       {
-        "command": "notesnlh.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForwardNew",
         "key": "ctrl+l",
         "when": "editorTextFocus && !isMac"
       },
       {
-        "command": "notesnlh.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackwardNew",
         "key": "cmd+shift+l",
         "when": "editorTextFocus && isMac"
       },
       {
-        "command": "notesnlh.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackwardNew",
         "key": "ctrl+shift+l",
         "when": "editorTextFocus && !isMac"
       }
