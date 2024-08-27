@@ -23,6 +23,10 @@ const posColors = {
   // Add more parts of speech as needed
 };
 
+const tokenTypes = ['entity_name_type', 'entity_name_function', 'entity_other_attribute_name', 'variable_language'];
+const tokenModifiers = [];
+
+
 exports.activate = async function activate(context) {
   context.subscriptions.push(
     commands.registerTextEditorCommand(
@@ -264,12 +268,16 @@ exports.activate = async function activate(context) {
             }
             // console.log('NLP term (tag 0):', term.text.length);
             const pos = term.tags[0]; // Get the first tag as the part of speech
+            console.log('Tag:', pos);
             if (posColors[pos]) {
+              console.log('Color:', posColors[pos]);
               const range = new vscode.Range(
                 new vscode.Position(lineNumber, characterNumber),
                 new vscode.Position(lineNumber, characterNumber + term.text.length)
               );
-              builder.push(range, posColors[pos]);
+              const tokenType = tokenTypes.indexOf(posColors[pos]);
+              builder.push(range, posColors[pos], tokenType);
+              // builder.push(range, posColors[pos]);
             }
             if (term.text.includes('\n')) {
               lineNumber += (term.text.match(/\n/g) || []).length;
@@ -289,7 +297,7 @@ exports.activate = async function activate(context) {
 
   // Register the semantic tokens provider
   const selector = { scheme: 'file', language: 'notesnlh' };
-  const legend = new vscode.SemanticTokensLegend(Object.values(posColors));  
+  const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers);
   const semanticTokensRegistration = vscode.languages.registerDocumentSemanticTokensProvider(
     selector,
     semanticTokensProvider,
