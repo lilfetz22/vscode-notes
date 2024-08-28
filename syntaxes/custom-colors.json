@@ -1,77 +1,82 @@
-// Place the following custom color configuration in your VS Code `settings.json` file to override
-// your editor's color theme, and use the "default colors" for the `*.notes` file type.
-
-"editor.tokenColorCustomizations": {
-  "textMateRules": [
-      {
-          // Regular text
-          "scope": "source.notes",
+{
+    "editor.tokenColorCustomizations": {
+      "textMateRules": [
+        {
+          "scope": "source.notesnlh",
           "settings": {
-              "foreground": "#d4d4d4ff"
+            "foreground": "#d4d4d4ff"
           }
-      },
-      {
-          // Headings
-          "scope": "markup.heading.notes",
+        },
+        {
+          "scope": "markup.heading.notesnlh",
           "settings": {
-              "foreground": "#569cd6ff"
+            "foreground": "#569cd6ff"
           }
-      },
-      {
-          // TODO items that are DONE
-          "scope": "markup.changed.notes",
+        },
+        {
+          "scope": "markup.changed.notesnlh",
           "settings": {
-              "foreground": "#569cd6ff"
+            "foreground": "#569cd6ff"
           }
-      },
-      {
-          // TODO items that have been CANCELED
-          "scope": "markup.canceled.notes",
+        },
+        {
+          "scope": "markup.canceled.notesnlh",
           "settings": {
-              "foreground": "#656565ff"
+            "foreground": "#656565ff"
           }
-      },
-      {
-          // Arrows and Tags
-          "scope": "variable.language.notes",
+        },
+        {
+          "scope": "variable.language.notesnlh",
           "settings": {
-              "foreground": "#92b630ff"
+            "foreground": "#92b630ff"
           }
-      },
-      {
-          // Language Name (text inside square brackets)
-          "scope": "markup.bold.notes",
+        },
+        {
+          "scope": "markup.bold.notesnlh",
           "settings": {
-              "foreground": "#569cd6ff"
+            "foreground": "#569cd6ff"
           }
-      },
-      {
-          // Emphasis
-          "scope": "keyword.other.notes",
+        },
+        {
+          "scope": "keyword.other.notesnlh",
           "settings": {
-              "foreground": "#569cd6ff"
+            "foreground": "#569cd6ff"
           }
-      },
-      {
-          // Open & Closed Parentheses
-          "scope": "keyword.operator.notes",
+        },
+        {
+          "scope": "keyword.operator.notesnlh",
           "settings": {
-              "foreground": "#92b630ff"
+            "foreground": "#92b630ff"
           }
-      },        
-      {
-          // Exclamation Mark
-          "scope": "invalid.deprecated.notes",
+        },
+        {
+          "scope": "invalid.deprecated.notesnlh",
           "settings": {
-              "foreground": "#f44747ff"
+            "foreground": "#f44747ff"
           }
-      },
-      {
-          // Commented Text
-          "scope": "comment.notes",
+        },
+        {
+          "scope": "comment.notesnlh",
           "settings": {
-              "foreground": "#6a9955ff"
+            "foreground": "#6a9955ff"
           }
-      },
-  ]
+        }
+      ]
+    },
+    "editor.semanticTokenColorCustomizations": {
+        "rules": {
+            "entity_name_type": {
+                "foreground": "#4EC9B0"
+            },
+            "entity_name_function": {
+                "foreground": "#DCDCAA"
+            },
+            "entity_other_attribute_name": {
+                "foreground": "#9CDCFE"
+            },
+            "adverb_language": {
+                "foreground": "#6a9955ff"
+            }
+        }
+    }
 }

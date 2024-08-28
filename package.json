@@ -1,11 +1,11 @@
 {
-  "name": "notes",
-  "displayName": "Notes",
-  "description": "Syntax highlighting for simple notes in Visual Studio Code",
+  "name": "notesnlh",
+  "displayName": "Notes_NLH",
+  "description": "Syntax highlighting for simple notes with NLP in Visual Studio Code",
   "icon": "images/icon.png",
   "version": "1.3.0",
-  "publisher": "canadaduane",
-  "repository": "https://github.com/canadaduane/vscode-notes",
+  "publisher": "lilfetz22",
+  "repository": "https://github.com/lilfetz22/vscode-notes",
   "engines": {
     "vscode": "^1.10.0"
   },
@@ -13,17 +13,17 @@
     "Programming Languages"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:notesnlh"
   ],
   "main": "./vscode/extension",
   "contributes": {
     "configuration": {
-      "title": "Notes",
+      "title": "Notes NLH",
       "properties": {
-        "notes.linkPatterns": {
+        "notesnlh.linkPatterns": {
           "type": "object",
           "default": {},
-          "description": "A list of regex to link patterns (e.g. Item: \"ABC-\\d+\"  Value: \"https://abc-project.atlassian.net/browse/$0\") that will be applied across all your notes. Turns matching text into links.",
+          "description": "A list of regex to link patterns (e.g. Item: \"ABC-\\d+\"  Value: \"https://abc-project.atlassian.net/browse/$0\") that will be applied across all your notesnlh. Turns matching text into links.",
           "additionalProperties": {
             "anyOf": [
               {
@@ -36,65 +36,94 @@
     },
     "languages": [
       {
-        "id": "notes",
+        "id": "notesnlh",
         "aliases": [
-          "Notes"
+          "Notes NLH"
         ],
         "extensions": [
-          ".notes"
+          ".notesnlh"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "notes",
-        "scopeName": "source.notes",
-        "path": "./syntaxes/notes.tmLanguage.json"
+        "language": "notesnlh",
+        "scopeName": "source.notesnlh",
+        "path": "./syntaxes/notesnlh.tmLanguage.json"
       }
     ],
     "commands": [
       {
-        "command": "notes.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForwardNew",
         "title": "Task Complete (cycle)"
       },
       {
-        "command": "notes.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackwardNew",
         "title": "Task Complete (cycle backward)"
+      },
+      {
+        "command": "notesnlh.highlightPartsOfSpeech",
+        "title": "Highlight Parts of Speech"
       }
     ],
     "snippets": [
       {
-        "language": "notes",
+        "language": "notesnlh",
         "path": "./snippets/newday.json"
       }
     ],
     "keybindings": [
       {
-        "command": "notes.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForwardNew",
         "key": "cmd+l",
         "when": "editorTextFocus && isMac"
       },
       {
-        "command": "notes.cycleTaskForward",
+        "command": "notesnlh.cycleTaskForwardNew",
         "key": "ctrl+l",
         "when": "editorTextFocus && !isMac"
       },
       {
-        "command": "notes.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackwardNew",
         "key": "cmd+shift+l",
         "when": "editorTextFocus && isMac"
       },
       {
-        "command": "notes.cycleTaskBackward",
+        "command": "notesnlh.cycleTaskBackwardNew",
         "key": "ctrl+shift+l",
         "when": "editorTextFocus && !isMac"
+      }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "entity_name_type",
+        "superType": "type",
+        "description": "Noun"
+      },
+      {
+        "id": "entity_name_function",
+        "superType": "function",
+        "description": "Verb"
+      },
+      {
+        "id": "entity_other_attribute_name",
+        "superType": "string",
+        "description": "Adjective"
+      },
+      {
+        "id": "adverb_language",
+        "superType": "variable",
+        "description": "Adverb"
       }
     ]
   },
   "__metadata": {
-    "id": "ccfb475f-3c67-45f3-a691-8588a006e64d",
-    "publisherDisplayName": "canadaduane",
-    "publisherId": "49b06e7f-44dd-4bc3-bf81-0c94b2c2c7f0"
+    "id": "",
+    "publisherDisplayName": "lilfetz22",
+    "publisherId": ""
+  },
+  "dependencies": {
+    "compromise": "^14.14.0"
   }
 }

@@ -146,3 +146,7 @@ yaml|yml -> source.yaml
 See [CHANGELOG.md](CHANGELOG.md).
 
 Syntax highlighting based on [Sublime Text Notes](https://packagecontrol.io/packages/Notes) by tbh1.
+
+## Acknowledgements
+
+This version of vscode-notes is an adaptation of the original work by Duane Johnson [canadaduane](https://github.com/canadaduane). We've extended the functionality to include Natural Language Highlighting, enhancing the note-taking experience. We're grateful for the extremely solid foundation provided by the original project.

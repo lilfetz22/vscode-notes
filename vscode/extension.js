@@ -1,4 +1,5 @@
 const vscode = require("vscode");
+const nlp = require('compromise');
 const os = require("os");
 const paths = require("path");
 const {
@@ -13,16 +14,35 @@ const {
   window,
 } = vscode;
 
+// Define color for each part of speech
+const posColors = {
+  Noun: 'entity_name_type',
+  Verb: 'entity_name_function',
+  Adjective: 'entity_other_attribute_name',
+  Adverb: 'adverb_language',
+};
+
+const tokenTypes = ['entity_name_type', 'entity_name_function', 'entity_other_attribute_name', 'adverb_language'];
+const tokenModifiers = [];
+
+
 exports.activate = async function activate(context) {
   context.subscriptions.push(
     commands.registerTextEditorCommand(
-      "notes.cycleTaskForward",
-      cycleTaskForward
+      "notesnlh.cycleTaskForwardNew",
+      cycleTaskForwardNew
     ),
     commands.registerTextEditorCommand(
-      "notes.cycleTaskBackward",
-      cycleTaskBackward
-    )
+      "notesnlh.cycleTaskBackwardNew",
+      cycleTaskBackwardNew
+    ),
+      // Add new command for NLP highlighting
+  //   context.subscriptions.push(
+  //     commands.registerTextEditorCommand(
+  //       "notesnlh.highlightPartsOfSpeech",
+  //       highlightPartsOfSpeech
+  //   )
+  // )
   );
 
   function expandPathHome(path) {
@@ -37,7 +57,7 @@ exports.activate = async function activate(context) {
     return text.replace(/\$(\d+)/g, (_, p1) => matches[parseInt(p1, 10)]);
   }
 
-  const linkPattern = /("([^"]+?\.notes)"|[^\s]+?\.notes)/g;
+  const linkPattern = /("([^"]+?\.notesnlh)"|[^\s]+?\.notesnlh)/g;
   // A file can describe it's own links via this pattern, e.g.
   //   [/\(MLG-\d+\)/ -> https://mediciventures.atlassian.net/browse/$0]
   const externalLinkPatterns = /\[\/([^\/]+)\/\s*->\s*(https?:\/\/[^\]]+)\]/g;
@@ -54,7 +74,7 @@ exports.activate = async function activate(context) {
       const externalPatterns = [];
 
       // use global link patterns from config
-      linkPatterns = vscode.workspace.getConfiguration("notes")["linkPatterns"];
+      linkPatterns = vscode.workspace.getConfiguration("notesnlh")["linkPatterns"];
       if (linkPatterns) {
         for (let [regexp, link] of Object.entries(linkPatterns)) {
           externalPatterns.push({ regexp, link });
@@ -67,7 +87,7 @@ exports.activate = async function activate(context) {
       }
       const results = [];
 
-      // Find "*.notes" links to other notes files in this document
+      // Find "*.notesnlh" links to other notesnlh files in this document
       while ((match = linkPattern.exec(text))) {
         const linkEnd = document.positionAt(linkPattern.lastIndex);
         const linkStart = linkEnd.translate({
@@ -111,7 +131,7 @@ exports.activate = async function activate(context) {
   };
 
   context.subscriptions.push(
-    languages.registerDocumentLinkProvider({ language: "notes" }, linkProvider)
+    languages.registerDocumentLinkProvider({ scheme: 'file', language: "notesnlh" }, linkProvider)
   );
 
   function swap(obj) {
@@ -147,11 +167,11 @@ exports.activate = async function activate(context) {
     }
   }
 
-  function cycleTaskForward(editor) {
+  function cycleTaskForwardNew(editor) {
     cycleTask(editor, nextTaskState);
   }
 
-  function cycleTaskBackward(editor) {
+  function cycleTaskBackwardNew(editor) {
     cycleTask(editor, prevTaskState);
   }
 
@@ -184,4 +204,80 @@ exports.activate = async function activate(context) {
       });
     });
   }
+
+  // Define the semantic tokens provider
+  const semanticTokensProvider = {
+    provideDocumentSemanticTokens(document) {
+      const text = document.getText();
+  
+      try {
+        const doc = nlp(text);
+        const json = doc.json();
+        const builder = new vscode.SemanticTokensBuilder(legend);
+        let lineNumber = 0;
+        let characterNumber = 0;
+
+        for (const sentence of json) {
+          for (const term of sentence.terms) {
+            if (!term || typeof term !== 'object') {
+              console.log('Invalid term:', term, 'type of term:', typeof term);
+              continue;
+            }
+
+            var pos = term.tags[0];
+            if (pos.toLowerCase().includes('noun')) {
+              // console.log('Noun detected:', pos);
+              pos = 'Noun';
+            }
+            if (posColors[pos]) {
+              const range = new vscode.Range(
+                new vscode.Position(lineNumber, characterNumber),
+                new vscode.Position(lineNumber, characterNumber + term.text.length)
+              );
+              // console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
+              //   Range: ${range.start.line + 1}:${range.start.character + 1}-${range.end.line + 1}:${range.end.character + 1}`);
+              builder.push(range, posColors[pos]);
+            }
+
+            // Handle the term text, including any embedded punctuation
+            for (const char of term.text) {
+              if (char === '\n') {
+                lineNumber++;
+                characterNumber = 0;
+              } else {
+                characterNumber++;
+              }
+            }
+
+            // Handle punctuation and spaces after the term
+            const afterText = term.post;
+            for (const char of afterText) {
+              if (char === '\n') {
+                lineNumber++;
+                characterNumber = 0;
+              } else {
+                characterNumber++;
+              }
+            }
+          }
+        }
+        const tokens = builder.build();
+        // console.log('Built tokens:', tokens);
+        return tokens
+      } catch (error) {
+        console.error('Error in provideDocumentSemanticTokens:', error);
+        return null;
+      }
+    }  
+  };
+  // Register the semantic tokens provider
+  const selector = { language: 'notesnlh', scheme: 'file' };
+  const legend = new vscode.SemanticTokensLegend(tokenTypes);
+  context.subscriptions.push(
+    vscode.languages.registerDocumentSemanticTokensProvider(
+      selector,
+      semanticTokensProvider,
+      legend
+    )
+  );
 };
