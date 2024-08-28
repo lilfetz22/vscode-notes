@@ -1,5 +1,5 @@
 {
-  "name": "notes_nlh",
+  "name": "notesnlh",
   "displayName": "Notes_NLH",
   "description": "Syntax highlighting for simple notes with NLP in Visual Studio Code",
   "icon": "images/icon.png",
@@ -13,7 +13,7 @@
     "Programming Languages"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:notesnlh"
   ],
   "main": "./vscode/extension",
   "contributes": {
