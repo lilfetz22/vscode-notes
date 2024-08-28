@@ -66,7 +66,7 @@
     "editor.semanticTokenColorCustomizations": {
         "rules": {
             "entity_name_type": {
-                "foreground": "#6a9955ff"
+                "foreground": "#DCDCAA"
             },
             "entity_name_function": {
                 "foreground": "#DCDCAA"

@@ -209,15 +209,15 @@ exports.activate = async function activate(context) {
   const semanticTokensProvider = {
     provideDocumentSemanticTokens(document) {
       const text = document.getText();
-      const nlhBlocks = text.match(/\[nlh\]([\s\S]*?)\[end\]/g);
-      if (!nlhBlocks) return null;
+      // const nlhBlocks = text.match(/\[nlh\]([\s\S]*?)\[end\]/g);
+      // if (!nlhBlocks) return null;
 
       // console.log('Processing document:', document.uri.toString());
       // console.log('Document content (first 100 chars):', text.substring(0, 100));
   
       try {
-        nlhBlocks.forEach(block => {
-          const content = block.slice(5, -5); // Remove [nlh] and [end]
+        // nlhBlocks.forEach(block => {
+        //   const content = block.slice(5, -5); // Remove [nlh] and [end]
           const doc = nlp(text);
           const json = doc.json();
           const builder = new vscode.SemanticTokensBuilder(legend);
@@ -267,7 +267,7 @@ exports.activate = async function activate(context) {
 
           const tokens = builder.build();
           console.log('Built tokens:', tokens);
-          return tokens});
+          return tokens//});
       } catch (error) {
         console.error('Error in provideDocumentSemanticTokens:', error);
         return null;
@@ -275,16 +275,13 @@ exports.activate = async function activate(context) {
     }  
   };
   // Register the semantic tokens provider
-  const selector = { scheme: 'file', language: 'notesnlh' };
+  const selector = { language: 'notesnlh', scheme: 'file', };
   const legend = new vscode.SemanticTokensLegend(tokenTypes); // , tokenModifiers
-  const semanticTokensRegistration = vscode.languages.registerDocumentSemanticTokensProvider(
-    selector,
-    semanticTokensProvider,
-    legend
+  context.subscriptions.push(
+    vscode.languages.registerDocumentSemanticTokensProvider(
+      selector,
+      semanticTokensProvider,
+      legend
+    )
   );
-
-  // Add the registration to subscriptions so it can be properly disposed
-  context.subscriptions.push(semanticTokensRegistration);
-// ... (export the activate function)
-
 };

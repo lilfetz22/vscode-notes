@@ -1323,53 +1323,6 @@
           "include": "source.yaml"
         }
       ]
-    },
-    {
-      "comment": "meta.embedded.nlh",
-      "begin": "\\[nlh\\]",
-      "beginCaptures": {
-        "1": {
-          "name": "string.regexp.notesnlh"
-        },
-        "2": {
-          "name": "markup.bold.notesnlh"
-        },
-        "3": {
-          "name": "string.regexp.notesnlh"
-        }
-      },
-      "end": "\\[end\\]",
-      "endCaptures": {
-        "1": {
-          "name": "string.regexp.notesnlh"
-        },
-        "3": {
-          "name": "markup.bold.notesnlh"
-        },
-        "4": {
-          "name": "string.regexp.notesnlh"
-        }
-      },
-      "patterns": [
-        {
-          "match": "\\b(\\w+)\\b",
-          "captures": {
-            "1": { "name": "entity.name.type.nlh.word" }
-          }
-        },
-        {
-          "match": "\\b(a|an|the)\\b",
-          "name": "storage.type.nlh.article"
-        },
-        {
-          "match": "\\b(is|are|was|were|be|been|being)\\b",
-          "name": "keyword.operator.nlh.verb.be"
-        },
-        {
-          "match": "\\b(very|really|quite)\\b",
-          "name": "constant.language.nlh.adverb"
-        }
-      ]
     }
   ]
 }

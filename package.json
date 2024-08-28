@@ -98,18 +98,22 @@
     "semanticTokenTypes": [
       {
         "id": "entity_name_type",
+        "superType": "type",
         "description": "Noun"
       },
       {
         "id": "entity_name_function",
+        "superType": "type",
         "description": "Verb"
       },
       {
         "id": "entity_other_attribute_name",
+        "superType": "type",
         "description": "Adjective"
       },
       {
         "id": "variable_language",
+        "superType": "type",
         "description": "Adverb"
       }
     ]
