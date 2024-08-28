@@ -19,10 +19,10 @@ const posColors = {
   Noun: 'entity_name_type',
   Verb: 'entity_name_function',
   Adjective: 'entity_other_attribute_name',
-  Adverb: 'variable_language',
+  Adverb: 'adverb_language',
 };
 
-const tokenTypes = ['entity_name_type', 'entity_name_function', 'entity_other_attribute_name', 'variable_language'];
+const tokenTypes = ['entity_name_type', 'entity_name_function', 'entity_other_attribute_name', 'adverb_language'];
 const tokenModifiers = [];
 
 
@@ -209,65 +209,61 @@ exports.activate = async function activate(context) {
   const semanticTokensProvider = {
     provideDocumentSemanticTokens(document) {
       const text = document.getText();
-      // const nlhBlocks = text.match(/\[nlh\]([\s\S]*?)\[end\]/g);
-      // if (!nlhBlocks) return null;
-
-      // console.log('Processing document:', document.uri.toString());
-      // console.log('Document content (first 100 chars):', text.substring(0, 100));
   
       try {
-        // nlhBlocks.forEach(block => {
-        //   const content = block.slice(5, -5); // Remove [nlh] and [end]
-          const doc = nlp(text);
-          const json = doc.json();
-          const builder = new vscode.SemanticTokensBuilder(legend);
-          let lineNumber = 0;
-          let characterNumber = 0;
+        const doc = nlp(text);
+        const json = doc.json();
+        const builder = new vscode.SemanticTokensBuilder(legend);
+        let lineNumber = 0;
+        let characterNumber = 0;
 
-          for (const sentence of json) {
-            for (const term of sentence.terms) {
-              if (!term || typeof term !== 'object') {
-                console.log('Invalid term:', term, 'type of term:', typeof term);
-                continue;
+        for (const sentence of json) {
+          for (const term of sentence.terms) {
+            if (!term || typeof term !== 'object') {
+              console.log('Invalid term:', term, 'type of term:', typeof term);
+              continue;
+            }
+
+            var pos = term.tags[0];
+            if (pos.toLowerCase().includes('noun')) {
+              // console.log('Noun detected:', pos);
+              pos = 'Noun';
+            }
+            if (posColors[pos]) {
+              const range = new vscode.Range(
+                new vscode.Position(lineNumber, characterNumber),
+                new vscode.Position(lineNumber, characterNumber + term.text.length)
+              );
+              // console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
+              //   Range: ${range.start.line + 1}:${range.start.character + 1}-${range.end.line + 1}:${range.end.character + 1}`);
+              builder.push(range, posColors[pos]);
+            }
+
+            // Handle the term text, including any embedded punctuation
+            for (const char of term.text) {
+              if (char === '\n') {
+                lineNumber++;
+                characterNumber = 0;
+              } else {
+                characterNumber++;
               }
+            }
 
-              const pos = term.tags[0];
-              if (posColors[pos]) {
-                const range = new vscode.Range(
-                  new vscode.Position(lineNumber, characterNumber),
-                  new vscode.Position(lineNumber, characterNumber + term.text.length)
-                );
-                // console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
-                //   Range: ${range.start.line + 1}:${range.start.character + 1}-${range.end.line + 1}:${range.end.character + 1}`);
-                builder.push(range, posColors[pos]);
-              }
-
-              // Handle the term text, including any embedded punctuation
-              for (const char of term.text) {
-                if (char === '\n') {
-                  lineNumber++;
-                  characterNumber = 0;
-                } else {
-                  characterNumber++;
-                }
-              }
-
-              // Handle punctuation and spaces after the term
-              const afterText = term.post;
-              for (const char of afterText) {
-                if (char === '\n') {
-                  lineNumber++;
-                  characterNumber = 0;
-                } else {
-                  characterNumber++;
-                }
+            // Handle punctuation and spaces after the term
+            const afterText = term.post;
+            for (const char of afterText) {
+              if (char === '\n') {
+                lineNumber++;
+                characterNumber = 0;
+              } else {
+                characterNumber++;
               }
             }
           }
-
-          const tokens = builder.build();
-          console.log('Built tokens:', tokens);
-          return tokens//});
+        }
+        const tokens = builder.build();
+        // console.log('Built tokens:', tokens);
+        return tokens
       } catch (error) {
         console.error('Error in provideDocumentSemanticTokens:', error);
         return null;
@@ -275,8 +271,8 @@ exports.activate = async function activate(context) {
     }  
   };
   // Register the semantic tokens provider
-  const selector = { language: 'notesnlh', scheme: 'file', };
-  const legend = new vscode.SemanticTokensLegend(tokenTypes); // , tokenModifiers
+  const selector = { language: 'notesnlh', scheme: 'file' };
+  const legend = new vscode.SemanticTokensLegend(tokenTypes);
   context.subscriptions.push(
     vscode.languages.registerDocumentSemanticTokensProvider(
       selector,

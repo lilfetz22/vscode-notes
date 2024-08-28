@@ -103,17 +103,17 @@
       },
       {
         "id": "entity_name_function",
-        "superType": "type",
+        "superType": "function",
         "description": "Verb"
       },
       {
         "id": "entity_other_attribute_name",
-        "superType": "type",
+        "superType": "string",
         "description": "Adjective"
       },
       {
-        "id": "variable_language",
-        "superType": "type",
+        "id": "adverb_language",
+        "superType": "variable",
         "description": "Adverb"
       }
     ]

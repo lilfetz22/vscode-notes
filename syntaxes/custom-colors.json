@@ -66,7 +66,7 @@
     "editor.semanticTokenColorCustomizations": {
         "rules": {
             "entity_name_type": {
-                "foreground": "#DCDCAA"
+                "foreground": "#4EC9B0"
             },
             "entity_name_function": {
                 "foreground": "#DCDCAA"
@@ -74,8 +74,8 @@
             "entity_other_attribute_name": {
                 "foreground": "#9CDCFE"
             },
-            "variable_language": {
-                "foreground": "#C586C0"
+            "adverb_language": {
+                "foreground": "#6a9955ff"
             }
         }
     }
