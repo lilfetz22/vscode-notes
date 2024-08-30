@@ -35,14 +35,7 @@ exports.activate = async function activate(context) {
     commands.registerTextEditorCommand(
       "notesnlh.cycleTaskBackwardNew",
       cycleTaskBackwardNew
-    ),
-      // Add new command for NLP highlighting
-  //   context.subscriptions.push(
-  //     commands.registerTextEditorCommand(
-  //       "notesnlh.highlightPartsOfSpeech",
-  //       highlightPartsOfSpeech
-  //   )
-  // )
+    )
   );
 
   function expandPathHome(path) {
@@ -216,6 +209,7 @@ exports.activate = async function activate(context) {
         const builder = new vscode.SemanticTokensBuilder(legend);
         let lineNumber = 0;
         let characterNumber = 0;
+        // console.log('json:', json);
 
         for (const sentence of json) {
           for (const term of sentence.terms) {
@@ -252,6 +246,16 @@ exports.activate = async function activate(context) {
             // Handle punctuation and spaces after the term
             const afterText = term.post;
             for (const char of afterText) {
+              if (char === '\n') {
+                lineNumber++;
+                characterNumber = 0;
+              } else {
+                characterNumber++;
+              }
+            }
+            // Handle puctuation before the terms
+            const preText = term.pre;
+            for (const char of preText) {
               if (char === '\n') {
                 lineNumber++;
                 characterNumber = 0;
