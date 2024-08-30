@@ -2,6 +2,7 @@ const vscode = require("vscode");
 const nlp = require('compromise');
 const os = require("os");
 const paths = require("path");
+const fs = require('fs');
 const {
   Uri,
   Range,
@@ -198,10 +199,68 @@ exports.activate = async function activate(context) {
     });
   }
 
+  function getSupportedLanguages() {
+    const tmLanguagePath = paths.join(__dirname, '..', 'syntaxes', 'notesnlh.tmLanguage.json');
+    const tmLanguageContent = fs.readFileSync(tmLanguagePath, 'utf8');
+    const tmLanguage = JSON.parse(tmLanguageContent);
+
+    
+    const languages = tmLanguage.patterns
+    .filter(pattern => pattern.begin && pattern.begin.includes('\\[') && pattern.begin.includes('\\]'))
+    .map(pattern => {
+      const match = pattern.begin.match(/\\\[(.*?)\\\]/);
+      return match ? match[1].split('|') : [];
+    })
+    .flat();
+    // console.log(new Set(languages));
+    
+    return new Set(languages);
+  }
+
+  function isInSpecialBlock(lineNumber, characterNumber, specialBlocks) {
+    for (const block of specialBlocks) {
+      if (lineNumber > block.start.line && lineNumber < block.end.line) {
+        return true;
+      }
+      if (lineNumber === block.start.line && characterNumber >= block.start.character) {
+        return true;
+      }
+      if (lineNumber === block.end.line && characterNumber <= block.end.character) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Define the semantic tokens provider
   const semanticTokensProvider = {
     provideDocumentSemanticTokens(document) {
       const text = document.getText();
+      const supportedLanguages = getSupportedLanguages();
+      const lines = text.split('\n');
+      const specialBlocks = [];
+      
+      // Detect special blocks
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.startsWith('//')) {
+            specialBlocks.push({
+                start: new vscode.Position(i, 0),
+                end: new vscode.Position(i, lines[i].length)
+            });
+        }
+        const languageMatch = line.match(/^\[([^\]]+)\]/);
+        if (languageMatch && supportedLanguages.has(languageMatch[1])) {
+            const startIndex = i;
+            while (i < lines.length && !lines[i].includes('[end]') && !lines[i].includes('[/')) {
+                i++;
+            }
+            specialBlocks.push({
+                start: new vscode.Position(startIndex, 0),
+                end: new vscode.Position(i, lines[i].length)
+            });
+          }
+      }
   
       try {
         const doc = nlp(text);
@@ -230,7 +289,9 @@ exports.activate = async function activate(context) {
               );
               // console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
               //   Range: ${range.start.line + 1}:${range.start.character + 1}-${range.end.line + 1}:${range.end.character + 1}`);
-              builder.push(range, posColors[pos]);
+              if (!isInSpecialBlock(lineNumber, characterNumber, specialBlocks)) {
+                builder.push(range, posColors[pos]);
+              }
             }
 
             // Handle the term text, including any embedded punctuation
