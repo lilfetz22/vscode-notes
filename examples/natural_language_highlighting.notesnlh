@@ -9,3 +9,6 @@ The gentle breeze whispered softly through the leaves, creating a peaceful atmos
 is are whispered
 
 quite
+[python]
+print("Hello, world!")
+[end]
