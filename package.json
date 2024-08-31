@@ -31,6 +31,31 @@
               }
             ]
           }
+        },
+          "notesnlh.highlightNouns": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight nouns in the document"
+        },
+        "notesnlh.highlightVerbs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight verbs in the document"
+        },
+        "notesnlh.highlightAdjectives": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight adjectives in the document"
+        },
+        "notesnlh.highlightAdverbs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight adverbs in the document"
+        },
+        "notesnlh.highlightNumbers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight numbers in the document"
         }
       }
     },

@@ -39,7 +39,18 @@ exports.activate = async function activate(context) {
       cycleTaskBackwardNew
     )
   );
-
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(event => {
+      if (event.affectsConfiguration('notesnlh')) {
+        // Trigger a re-highlight of all open documents
+        vscode.workspace.textDocuments.forEach(doc => {
+          if (doc.languageId === 'notesnlh') {
+            vscode.languages.triggerTokenSemanticTokensRefresh();
+          }
+        });
+      }
+    })
+  );
   function expandPathHome(path) {
     if (path.slice(0, 1) == "~") {
       return paths.join(os.homedir(), path.slice(1, path.length));
@@ -233,6 +244,23 @@ exports.activate = async function activate(context) {
     return false;
   }
 
+  function shouldHighlightPOS(pos, config) {
+    switch (pos.toLowerCase()) {
+      case 'noun':
+        return config.get('highlightNouns');
+      case 'verb':
+        return config.get('highlightVerbs');
+      case 'adjective':
+        return config.get('highlightAdjectives');
+      case 'adverb':
+        return config.get('highlightAdverbs');
+      case 'value':
+        return config.get('highlightNumbers');
+      default:
+        return false;
+    }
+  }
+
   // Define the semantic tokens provider
   const semanticTokensProvider = {
     provideDocumentSemanticTokens(document) {
@@ -273,6 +301,7 @@ exports.activate = async function activate(context) {
         let lineNumber = 0;
         let characterNumber = 0;
         console.log('json:', json);
+        const config = vscode.workspace.getConfiguration('notesnlh');
 
         for (const sentence of json) {
           for (const term of sentence.terms) {
@@ -283,22 +312,21 @@ exports.activate = async function activate(context) {
 
             var pos = term.tags[0];
             if (pos.toLowerCase().includes('noun')) {
-              // console.log('Noun detected:', pos);
               pos = 'Noun';
             }
-            if (posColors[pos]) {
-              const range = new vscode.Range(
-                new vscode.Position(lineNumber, characterNumber),
-                new vscode.Position(lineNumber, characterNumber + term.text.length)
-              );
               // console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
               //   Range: ${range.start.line + 1}:${range.start.character + 1}-${range.end.line + 1}:${range.end.character + 1}`);
               // console.log('special block', lineNumber, characterNumber, isInSpecialBlock(lineNumber, characterNumber, specialBlocks));
-              if (!isInSpecialBlock(lineNumber, characterNumber, specialBlocks)) {
+            if ((!isInSpecialBlock(lineNumber, characterNumber, specialBlocks)) && (posColors[pos]) &&
+              (shouldHighlightPOS(pos, config))) {
+                const range = new vscode.Range(
+                  new vscode.Position(lineNumber, characterNumber),
+                  new vscode.Position(lineNumber, characterNumber + term.text.length)
+                );
                 var specialblock = false;
                 builder.push(range, posColors[pos]);
               }
-            }
+            
 
             // Handle the term text, including any embedded punctuation
             if (lineNumber === 15){
