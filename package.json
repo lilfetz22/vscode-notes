@@ -115,6 +115,11 @@
         "id": "adverb_language",
         "superType": "variable",
         "description": "Adverb"
+      },
+      {
+        "id": "value_type",
+        "superType": "regexp",
+        "description": "Value"
       }
     ]
   },

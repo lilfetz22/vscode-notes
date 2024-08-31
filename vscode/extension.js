@@ -21,9 +21,10 @@ const posColors = {
   Verb: 'entity_name_function',
   Adjective: 'entity_other_attribute_name',
   Adverb: 'adverb_language',
+  Value: 'value_type'
 };
 
-const tokenTypes = ['entity_name_type', 'entity_name_function', 'entity_other_attribute_name', 'adverb_language'];
+const tokenTypes = ['entity_name_type', 'entity_name_function', 'entity_other_attribute_name', 'adverb_language', 'value_type'];
 const tokenModifiers = [];
 
 
