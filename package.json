@@ -32,7 +32,7 @@
             ]
           }
         },
-          "notesnlh.highlightNouns": {
+        "notesnlh.highlightNouns": {
           "type": "boolean",
           "default": true,
           "description": "Highlight nouns in the document"
@@ -155,5 +155,8 @@
   },
   "dependencies": {
     "compromise": "^14.14.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.1"
   }
 }
