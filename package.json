@@ -2,7 +2,7 @@
   "name": "notesnlh",
   "displayName": "Notes_NLH",
   "description": "Syntax highlighting for simple notes with NLP in Visual Studio Code",
-  "icon": "images/icon.png",
+  "icon": "images/Natural_Language_Highlighting.png",
   "version": "1.3.0",
   "publisher": "lilfetz22",
   "repository": "https://github.com/lilfetz22/vscode-notes",
