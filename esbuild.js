@@ -13,7 +13,7 @@ async function main() {
     sourcesContent: false,
     platform: 'node',
     outfile: 'dist/extension_bundled.js',
-    external: ['vscode', 'compromise', 'os', 'path', 'fs'],
+    external: ['vscode'],
     logLevel: 'silent',
     plugins: [
       /* add to the end of plugins array */
