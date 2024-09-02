@@ -300,7 +300,7 @@ exports.activate = async function activate(context) {
         const builder = new vscode.SemanticTokensBuilder(legend);
         let lineNumber = 0;
         let characterNumber = 0;
-        console.log('json:', json);
+        // console.log('json:', json);
         const config = vscode.workspace.getConfiguration('notesnlh');
 
         for (const sentence of json) {
@@ -314,6 +314,19 @@ exports.activate = async function activate(context) {
             if (pos.toLowerCase().includes('noun')) {
               pos = 'Noun';
             }
+            // Handle puctuation before the terms
+            const preText = term.pre;
+            // if ((lineNumber === 19) || (lineNumber === 18)){
+            //   console.log('preText:', lineNumber, characterNumber, specialblock, preText);
+            // }
+            for (const char of preText) {
+              if (char === '\n') {
+                lineNumber++;
+                characterNumber = 0;
+              } else { //  if (!specialblock)
+                characterNumber++;                
+              }
+            }
               // console.log(`Pushing token: ${term.text}, Type: ${posColors[pos]}, 
               //   Range: ${range.start.line + 1}:${range.start.character + 1}-${range.end.line + 1}:${range.end.character + 1}`);
               // console.log('special block', lineNumber, characterNumber, isInSpecialBlock(lineNumber, characterNumber, specialBlocks));
@@ -325,13 +338,12 @@ exports.activate = async function activate(context) {
                 );
                 var specialblock = false;
                 builder.push(range, posColors[pos]);
-              }
-            
+              }            
 
             // Handle the term text, including any embedded punctuation
-            if (lineNumber === 15){
-              console.log('term.text:', lineNumber, characterNumber, term.text);
-            }
+            // if ((lineNumber === 19) || (lineNumber === 18)) {
+            //   console.log('term.text:', lineNumber, characterNumber, term.text);
+            // }
             for (const char of term.text) {
               if (char === '\n') {
                 lineNumber++;
@@ -344,9 +356,9 @@ exports.activate = async function activate(context) {
 
             // Handle punctuation and spaces after the term
             const afterText = term.post;
-            if (lineNumber === 15){
-              console.log('afterText:', lineNumber, characterNumber, afterText);
-            }
+            // if ((lineNumber === 19) || (lineNumber === 18)){
+            //   console.log('afterText:', lineNumber, characterNumber, afterText);
+            // }
             for (const char of afterText) {
               if (char === '\n') {
                 lineNumber++;
@@ -355,19 +367,10 @@ exports.activate = async function activate(context) {
                 characterNumber++;
               }
             }
-            // Handle puctuation before the terms
-            const preText = term.pre;
-            if (lineNumber === 15){
-              console.log('preText:', lineNumber, characterNumber, preText);
-            }            
-            for (const char of preText) {
-              if (char === '\n') {
-                lineNumber++;
-                characterNumber = 0;
-              } else if (!specialblock){
-                characterNumber++;
-              }
-            }
+
+            // if ((lineNumber === 19) || (lineNumber === 18)){
+            //   console.log('characterNumber:', lineNumber, characterNumber);
+            // }
             if (isInSpecialBlock(lineNumber, characterNumber, specialBlocks)){
               characterNumber = 0;
               specialblock = true;
