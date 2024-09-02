@@ -15,7 +15,7 @@
   "activationEvents": [
     "onLanguage:notesnlh"
   ],
-  "main": "./vscode/extension",
+  "main": "./dist/extension_bundled.js",
   "contributes": {
     "configuration": {
       "title": "Notes NLH",
