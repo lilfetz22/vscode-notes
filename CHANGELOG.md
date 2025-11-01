@@ -1,5 +1,49 @@
 # Change Log
 
+## [0.0.1] - Natural Language Highlighting Edition
+
+### Added
+- **Natural Language Highlighting (NLH)** - Real-time part-of-speech highlighting using Compromise NLP library
+  - Automatic colorization of nouns, verbs, adjectives, adverbs, and numbers
+  - Semantic token highlighting for better visual parsing of text
+  - Configurable highlighting options for each part of speech
+- New file extension `.notesnlh` for natural language highlighted notes
+- Configuration settings:
+  - `notesnlh.highlightNouns` - Toggle noun highlighting
+  - `notesnlh.highlightVerbs` - Toggle verb highlighting
+  - `notesnlh.highlightAdjectives` - Toggle adjective highlighting
+  - `notesnlh.highlightAdverbs` - Toggle adverb highlighting
+  - `notesnlh.highlightNumbers` - Toggle number highlighting
+  - `notesnlh.linkPatterns` - Custom link patterns (replaces `notes.predefinedLinks`)
+- Semantic token types for customizable colors:
+  - `entity_name_type` (Nouns)
+  - `entity_name_function` (Verbs)
+  - `entity_other_attribute_name` (Adjectives)
+  - `adverb_language` (Adverbs)
+  - `value_type` (Numbers)
+- Smart NLP analysis that excludes code blocks, comments, and TODO items
+- Example file `examples/natural_language_highlighting.notesnlh` demonstrating the feature
+- Dependency on Compromise NLP library for natural language processing
+
+### Changed
+- Package name changed to `notesnlh`
+- Display name changed to `Notes_NLH`
+- Repository URL updated to `https://github.com/lilfetz22/vscode-notes`
+- All references to `.notes` file extension updated to `.notesnlh`
+- Updated icon to reflect Natural Language Highlighting feature
+- Extension language ID changed from `notes` to `notesnlh`
+- Scope names updated from `source.notes` to `source.notesnlh`
+
+### Technical Details
+- Uses `compromise` v14.14.0 for NLP analysis
+- Implements VS Code Semantic Tokens Provider API
+- Real-time highlighting with automatic refresh on configuration changes
+- Efficient processing that preserves performance while typing
+
+---
+
+## Previous Versions (from original vscode-notes)
+
 ### [1.1.0]
 
 - Add "High Priority" state (`[!]`) to TODO list cycle command (Cmd-`L`)

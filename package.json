@@ -1,7 +1,7 @@
 {
   "name": "notesnlh",
   "displayName": "Notes_NLH",
-  "description": "Syntax highlighting for simple notes with NLP in Visual Studio Code",
+  "description": "Syntax highlighting for simple notes with Natural Language Highlighting (NLP parts of speech) in Visual Studio Code",
   "icon": "images/Natural_Language_Highlighting.png",
   "version": "0.0.1",
   "publisher": "lilfetz22",
